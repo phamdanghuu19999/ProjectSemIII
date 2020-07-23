@@ -1,0 +1,120 @@
+﻿@model IEnumerable<Project.Net.Models.DataModel.Order>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/LayoutAdmin.cshtml";
+}
+
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">@ViewBag.Title</h3>
+
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                        title="Collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="box-tools">
+                @using (Html.BeginForm("Index", "Order", FormMethod.Get))
+                {
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                        <input type="text" name="table_search" value="@ViewBag.key" class="form-control pull-right" placeholder="Search">
+
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="box-body">
+            <p>
+                @Html.ActionLink("Create New", "Create")
+            </p>
+            <table class="table">
+                <tr>
+                   
+                    <th>
+                        @Html.DisplayNameFor(model => model.FullName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Email)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Phone)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Address)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Created)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </th>
+                    <th></th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Users.FullName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Created)
+                </td>
+                <td>
+                    @switch (item.Status)
+                    {
+                        case 1:
+                            <span class="label label-warning">Wait</span>
+                            break;
+                        case 2:
+                           <span class="label label-info">Comfirmed</span>
+                            break;
+                        case 3:
+                           <span class="label label-primary">Transporting</span>
+                            break;
+                        case 4:
+                            <span class="label label-success">Done</span>
+                            break;
+                        case 0:
+                            <span class="label label-danger">Canel</span>
+                            break;
+                        default:
+                            break;
+                    }
+                </td>
+                <td>
+                    
+                    @Html.ActionLink("Details", "Details", new { id = item.OrderId }) 
+                  
+                </td>
+            </tr>
+                }
+
+            </table>
+        </div>
+        <!-- /.box-body -->
+        @*<div class="box-footer">
+           Phân trang
+        </div>*@
+        <!-- /.box-footer-->
+    </div>
+
+

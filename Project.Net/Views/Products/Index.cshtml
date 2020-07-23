@@ -1,0 +1,153 @@
+﻿
+@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section plugincss{
+	<link rel="stylesheet" type="text/css" href="~/Content/plugins/jquery-ui-1.12.1.custom/jquery-ui.css">
+	<link rel="stylesheet" type="text/css" href="~/Content/styles/shop_styles.css">
+	<link rel="stylesheet" type="text/css" href="~/Content/styles/shop_responsive.css">
+}
+
+<div class="home">
+	<div class="home_background parallax-window" data-parallax="scroll" data-image-src="/Content/images/shop_background.jpg"></div>
+	<div class="home_overlay"></div>
+	<div class="home_content d-flex flex-column align-items-center justify-content-center">
+		<h2 class="home_title">All Categories</h2>
+	</div>
+</div>
+
+<!-- Shop -->
+<div id="shop">
+	<div class="shop">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-3">
+
+					<!-- Shop Sidebar -->
+					<div class="shop_sidebar">
+						<div class="sidebar_section">
+							<div class="sidebar_title">Categories</div>
+							<ul class="sidebar_categories">
+								<li v-for="cat in listCategory"><a :href="'/Products/ProductInCate/'+cat.CategoryId">{{cat.CategoryName}}</a></li>
+
+							</ul>
+						</div>
+						<div class="sidebar_section filter_by_section">
+							<div class="sidebar_title">Filter By</div>
+							<div class="sidebar_subtitle">Price</div>
+							<div class="filter_price">
+								<div id="slider-range" class="slider_range"></div>
+								<p>Range: </p>
+								<p><input type="text" id="amount" class="amount" readonly style="border:0; font-weight:bold;"></p>
+							</div>
+						</div>
+
+
+					</div>
+
+				</div>
+
+				<div class="col-lg-9">
+
+					<!-- Shop Content -->
+
+					<div class="shop_content">
+						<div class="shop_bar clearfix">
+							<div class="shop_product_count"><span>{{listProducts.length}}</span> products found</div>
+							<div class="shop_sorting">
+								<span>Sort by:</span>
+								<ul>
+									<li>
+										<span class="sorting_text">highest rated<i class="fas fa-chevron-down"></i></span><i />
+										<ul>
+											<li class="shop_sorting_button" data-isotope-option='{ "sortBy": "original-order" }'>highest rated</li>
+											<li class="shop_sorting_button" data-isotope-option='{ "sortBy": "name" }'>name</li>
+											<li class="shop_sorting_button" data-isotope-option='{ "sortBy": "price" }'>price</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="product_grid">
+							<div class="product_grid_border"></div>
+
+							<!-- Product Item -->
+							<div class="product_item" v-for="p in listProducts" :key="p.ProductId" v-bind:class="classObject(p.ProductNotes)">
+								<div class="product_border"></div>
+								<div class="product_image d-flex flex-column align-items-center justify-content-center"><img :src="p.Image"></div>
+								<div class="product_content">
+									<div class="product_price" v-if="p.SalePrice">${{p.SalePrice}}<span>${{p.Price}}</span></div>
+									<div class="product_price" v-else>${{p.Price}}</div>
+									<div class="product_name"><div><a :href="'/Products/Details/'+p.ProductId" tabindex="0">{{p.ProductName}}</a></div></div>
+								</div>
+								<div class="product_fav"><i class="fas fa-heart"></i></div>
+								<ul class="product_marks">
+									<li class="product_mark product_discount">-25%</li>
+									<li class="product_mark product_new">new</li>
+								</ul>
+							</div>
+						</div>
+
+						<!-- Shop Page Navigation -->
+						@*<div class="shop_page_nav d-flex flex-row">
+								<div class="page_prev d-flex flex-column align-items-center justify-content-center"><i class="fas fa-chevron-left"></i></div>
+								<ul class="page_nav d-flex flex-row">
+									<li><a href="#">1</a></li>
+									<li><a href="#">2</a></li>
+									<li><a href="#">3</a></li>
+									<li><a href="#">...</a></li>
+									<li><a href="#">21</a></li>
+								</ul>
+								<div class="page_next d-flex flex-column align-items-center justify-content-center"><i class="fas fa-chevron-right"></i></div>
+							</div>*@
+
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Brands -->
+
+	<div class="brands" id="brands">
+		<div class="container">
+			<div class="row">
+				<div class="col">
+					<div class="brands_slider_container">
+
+						<!-- Brands Slider -->
+
+						<div class="owl-carousel owl-theme brands_slider">
+							<div class="owl-item" v-for="b in listSupplier"><div class="brands_item d-flex flex-column justify-content-center"><img :src="b.Logo"></div></div>
+						</div>
+
+						<!-- Brands Slider Navigation -->
+						<div class="brands_nav brands_prev"><i class="fas fa-chevron-left"></i></div>
+						<div class="brands_nav brands_next"><i class="fas fa-chevron-right"></i></div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section pluginjs{
+	<script src="~/Content/plugins/easing/easing.js"></script>
+	<script src="~/Content/plugins/Isotope/isotope.pkgd.min.js"></script>
+	<script type="text/javascript">
+        var id = '@ViewBag.id'
+        var name = '@ViewBag.name'
+	</script>
+
+	<script src="~/Content/plugins/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+	<script src="~/Content/plugins/parallax-js-master/parallax.min.js"></script>
+	<script src="~/Content/js/custom/shop_products.js"></script>
+
+}
+
+

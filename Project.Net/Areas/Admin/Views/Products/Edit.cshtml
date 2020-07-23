@@ -1,0 +1,264 @@
+﻿@using Project.Net.Models.DataModel
+@model Project.Net.Models.DataModel.Product
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/LayoutAdmin.cshtml";
+    var AttrType = ViewBag.AttrTypes as IEnumerable<AttributeType>;
+    var count = 0;
+}
+
+<div class="box">
+    <div class="box-header with-border">
+        <h3 class="box-title">@ViewBag.Title</h3>
+
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                    title="Collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        @using (Html.BeginForm("Edit", "Products", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <h4>Product</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.ProductId)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ProductName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ProductName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ProductName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CategoryId, "CategoryId", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("CategoryId", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.SupplierId, "SupplierId", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("SupplierId", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.SupplierId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            @foreach (var item in ViewBag.AttrType)
+            {
+                <div class="form-group">
+                    <label class="control-label col-md-2">@item.TypeName</label>
+                    <div class="col-md-10">
+                        @foreach (var attr in item.Attributes)
+						{
+							var check = Model.ProductAttrs.Any(x => x.AttrId == @attr.Id) ? "checked" : "";
+							var _p = Model.ProductAttrs.FirstOrDefault(x => x.ProductId == Model.ProductId && x.AttrId == attr.Id);
+							
+						<label>
+							@if (check == "checked")
+							{
+
+								<input type="checkbox" class="prAttr" @check name="ProductAttrs[@count].AttrId" value="@attr.Id" /> @attr.Name
+								count++;
+								if (item.TypeName == "Color")
+								{
+									<input type="text" class="form-control priceByColor" @check name="ProductAttrs[@count].PriceByColor" value="@_p.PriceByColor" placeholder="PriceByColor..." style="width:125px;" />
+								}
+							}
+							else
+							{
+								<input type="checkbox" class="prAttr" value="@attr.Id" /> @attr.Name
+								if (item.TypeName == "Color")
+								{
+									<input type="text" class="form-control priceByColor" name="" value="" placeholder="PriceByColor..." style="width:125px;display: none;" />
+								}
+							}
+
+						</label>
+                        }
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                @Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Image, new { htmlAttributes = new { data_multiple = "false", @class = "form-control upload_files" } })
+                    <div class="Image">
+                        <img src="@Model.Image" alt="Alternate Text" />
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ImageList, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ImageList, new { htmlAttributes = new { data_multiple = "true", @class = "form-control upload_files" } })
+                    <div class="ImageList">
+                        @{
+                            if (Model.ImageList != null)
+                            {
+                                var imgs = Model.ImageList.Split(';');
+
+                                foreach (var item in imgs)
+                                {
+                                    <img src="@item" alt="Alternate Text" />
+                                }
+                            }
+                        }
+
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ImageList, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <textarea id="des" name="Description">@Model.Description</textarea>
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Note</label>
+                <div class="col-md-10">
+                    @foreach (var item in ViewBag.proNote)
+                    {
+                        var check = Model.ProductNotes.Any(x => x.NoteId == item.Id) ? "checked" : "";
+                    <label>
+                        @if (check == "checked")
+                        {
+                            <input type="checkbox" class="proNote" @check name="ProductNotes[@count].NoteId" value="@item.Id" />
+                            count++;
+                        }
+                        else
+                        {
+                            <input type="checkbox" class="proNote" value="@item.Id" />
+                        }
+                        @item.AttrName
+                    </label>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.SalePrice, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.SalePrice, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SalePrice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <div class="checkbox">
+                        @Html.EditorFor(model => model.Status)
+                        @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    <!-- /.box-body -->
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/ckeditor/ckeditor.js"></script>
+    <script src="~/ckfinder/ckfinder.js"></script>
+    <script>
+        $(function () {
+			CKEDITOR.replace("des");
+			//$('input.priceByColor').hide();
+			// Những color nào đang được tích thì hiện price
+
+
+            $(".prAttr").click(function () {
+				
+                var check = $(this).is(":checked");
+                var index = 0;
+				$(".prAttr").each(function (idx, item) {
+					var label = $(this).parent("label");
+					if ($(this).is(":checked")) {
+						
+						label.find('input.priceByColor').show();
+						label.find('input.priceByColor').attr("name", "ProductAttrs[" + index + "].PriceByColor");
+						$(this).attr("name", "ProductAttrs[" + index + "].AttrId");
+						
+                        index++;
+                    } else {
+						$(this).attr("name", "");
+						label.find('input.priceByColor').hide();
+						 $('inputpriceByColor').hide();
+                    }
+                });
+            })
+            $(".proNote").click(function () {
+                var check = $(this).is(":checked");
+                var index = 0;
+                $(".proNote").each(function (idx, item) {
+                    if ($(this).is(":checked")) {
+                        $(this).attr("name", "ProductNotes[" + index + "].NoteId");
+                        index++;
+                    } else {
+                        $(this).attr("name", "");
+                    }
+                });
+            })
+            $(".upload_files").click(function () {
+                var finder = new CKFinder();
+                var _input = $(this);
+                console.log(_input.data("multiple"));
+                finder.selectActionFunction = function (url,file,files) {
+                    //kiểm tra input up 1 hay nhiều ảnh
+                    console.log(_input.data("multiple"));
+                    if (_input.data("multiple") == true) {
+                        var urls = "";
+                        var imgs = "";
+                        $.each(files, function () {
+                            urls += $(this)[0].url + ";"
+                            imgs += "<img src='" + $(this)[0].url + "' width='100'/>";
+                        })
+                        urls=urls.slice(0, urls.length - 1);
+                        _input.val(urls);
+                        $("div.ImageList").html(imgs);
+                    } else {
+                        _input.val(url);
+                        $("div.Image").html("<img src='" + url + "' width='100'/>");
+                    }
+                    
+                }
+                finder.popup();
+            })
+        })
+    </script>
+}

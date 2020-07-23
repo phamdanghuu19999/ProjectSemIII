@@ -1,0 +1,140 @@
+﻿@model IEnumerable<Project.Net.Models.DataModel.Group>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/LayoutAdmin.cshtml";
+}
+<style>
+    tr.active > td {
+        background: #06c !important;
+        color: #fff;
+    }
+</style>
+
+<div class="box">
+    <div class="box-header with-border">
+        <h3 class="box-title">@ViewBag.Title</h3>
+
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                    title="Collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <div class="col-md-3">
+                <table class="table">
+                    <tr class="bg-primary">
+                        <th>
+                            @Html.DisplayNameFor(model => model.GroupName)
+                        </th>
+
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr class="item_group" data-id="@item.GroupId">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GroupName)
+                            </td>
+
+                        </tr>
+                    }
+
+                </table>
+            </div>
+            <div class="col-md-9">
+                <table class="table">
+                    <tr class="bg-warning">
+                        <th>Business Name</th>
+                        @foreach (var item in ViewBag.roles)
+                        {
+                            <th class="text-center">@item.RoleName</th>
+                        }
+                    </tr>
+
+                    @foreach (var item in ViewBag.businesses)
+                    {
+                        <tr>
+                            <td>@item.BusinessName</td>
+                            @foreach (var role in ViewBag.roles)
+                            {
+                                <td class="text-center">
+                                    <input type="checkbox" data-business="@item.BusinessId" class="item_role @item.BusinessId-@role.RoleId" name="name" value="@role.RoleId" />
+                                </td>
+                            }
+                        </tr>
+
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+    <div class="box-footer">
+        Phân trang
+    </div>
+    <!-- /.box-footer-->
+</div>
+@section scripts{
+   
+    <script>
+        $(function () {
+
+            $(".item_group").click(function () {
+
+                $(this).addClass("active").siblings().removeClass("active");
+
+                var groupId = $(this).data("id");
+
+                $.ajax({
+                    type: "GET",
+                    url: "/Admin/Group/GetRoles/" + groupId,
+                    success: function (res) {
+                        // Clear các quyền của nhóm cũ
+                        $(".item_role").prop("checked", false);
+                        // Check các quyền của nhóm hiện tại
+                        $.each(res, function () {
+                            $("." + this.BusinessId + "-" + this.RoleId).prop("checked", true);
+                        })
+                    }
+
+                })
+            })
+            $(".item_role").click(function () {
+
+                var groupId = $(".item_group.active").data("id");
+                var businessId = $(this).data("business");
+                var roleId = $(this).val();
+
+
+                $.ajax({
+
+                    type: "POST",
+                    url: "/Admin/Group/Grant",
+                    data: {
+                        GroupId: groupId,
+                        BusinessId: businessId,
+                        RoleId: roleId
+                    },
+                    success: function (res) {
+                       
+                        swal({
+                            text: res.Message,
+                            icon: "success",
+                            button: "OK!",
+                        });
+                    }
+                })
+            })
+        })
+
+
+    </script>
+
+}

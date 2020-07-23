@@ -1,0 +1,72 @@
+﻿@model Project.Net.Models.DataModel.AttributeType
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Areas/Admin/Views/Shared/LayoutAdmin.cshtml";
+}
+
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">@ViewBag.Title</h3>
+
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                        title="Collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+
+
+            <div>
+                <h4>AttributeType</h4>
+                <hr />
+                <dl class="dl-horizontal">
+                    <dt>
+                        @Html.DisplayNameFor(model => model.AttrTypeId)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.AttrTypeId)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.TypeName)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.TypeName)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.OrderBy)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.OrderBy)
+                    </dd>
+
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Status)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.Status)
+                    </dd>
+
+                </dl>
+            </div>
+            <p>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.AttrTypeId }) |
+                @Html.ActionLink("Back to List", "Index")
+            </p>
+        </div>
+        <!-- /.box-body -->
+        @*<div class="box-footer">
+            Phân trang
+        </div>*@
+        <!-- /.box-footer-->
+    </div>

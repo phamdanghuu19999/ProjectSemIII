@@ -1,0 +1,256 @@
+﻿@model IEnumerable<Project.Net.Models.DataModel.ItemCart>
+@using Project.Net.Models.DataModel;
+@{
+	ViewBag.Title = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section plugincss{
+
+	<link rel="stylesheet" type="text/css" href="~/Content/styles/cart_styles.css">
+	<link rel="stylesheet" type="text/css" href="~/Content/styles/cart_responsive.css">
+}
+
+
+<div class="cart_section">
+	<div class="container">
+		<div class="row">
+			<div></div>
+			<div class="col-lg-10 offset-lg-1">
+				<div class="cart_container">
+					<div class="cart_title">Shopping Cart</div>
+					<div class="cart_items">
+						@{var cart = (List<ItemCart>)@Session["cart"]; }
+						@if (cart.Count == 0)
+						{
+						<div class="alert alert-info">
+							<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+							<a href="@Url.Action("Index","Products")" style="font-family: tahoma;">You have no products! Click here to select products</a>
+						</div>
+						}
+						<ul class="cart_list">
+							<li class="cart_item clearfix">
+								<div class="cart_item_image"><img src="images/shopping_cart.jpg" alt=""></div>
+								<div class="cart_item_info d-flex flex-md-row flex-column justify-content-between">
+									<div class="cart_item_name cart_info_col">
+										<div class="cart_item_title">Name</div>
+
+									</div>
+									<div class="cart_item_color cart_info_col">
+										<div class="cart_item_title">Color</div>
+
+									</div>
+									<div class="cart_item_color cart_info_col">
+										<div class="cart_item_title">ROM</div>
+
+									</div>
+									<div class="cart_item_quantity cart_info_col">
+										<div class="cart_item_title">Quantity</div>
+
+									</div>
+									<div class="cart_item_price cart_info_col">
+										<div class="cart_item_title">Price</div>
+
+									</div>
+									<div class="cart_item_total cart_info_col">
+										<div class="cart_item_title">Total</div>
+
+									</div>
+									<div class="cart_item_total cart_info_col">
+										<div class="cart_item_title"></div>
+
+									</div>
+								</div>
+							</li>
+
+
+
+
+
+
+							@{ var price = 0;}
+							@{ var order = 0;}
+							@{ var total = 0;}
+
+							@foreach (var item in cart)
+							{
+
+								
+								total = (int)item.price * item.Quantity;
+								order += total;
+
+
+								<li class="cart_item clearfix" data-id="@item.Product.ProductId"
+									data-price="@item.price" data-attribute="@item.Attributes">
+									<div class="cart_item_image"><img src="@item.Product.Image" alt=""></div>
+									<div class="cart_item_info d-flex flex-md-row flex-column justify-content-between">
+
+										<div class="cart_item_name cart_info_col">
+
+											<div class="cart_item_text">@item.Product.ProductName</div>
+										</div>
+										<div class="cart_item_color cart_info_col">
+
+
+											@{ var _attrId = item.Attributes.Split(',');}
+											@foreach (var attr in ViewBag.Attrs)
+											{
+												if (_attrId.Any(x => Convert.ToInt32(x) == attr.Id) && attr.AttributeTypes.TypeName == "Color")
+												{
+
+													<div class="cart_item_text">@attr.Name</div>
+												}
+											}
+
+										</div>
+										<div class="cart_item_color cart_info_col">
+
+											@foreach (var attr in ViewBag.Attrs)
+											{
+												if (_attrId.Any(x => Convert.ToInt32(x) == attr.Id) && attr.AttributeTypes.TypeName == "ROM")
+												{
+
+													<div class="cart_item_text">@attr.Name</div>
+												}
+											}
+
+
+										</div>
+										<div class="cart_item_quantity cart_info_col">
+
+											<div class="cart_item_text quantity">
+												<input type="number" value="@item.Quantity" min="0" style="width:40px !important" />
+											</div>
+										</div>
+										<div class="cart_item_price cart_info_col">
+
+
+											<div class="cart_item_text">@item.price</div>
+										</div>
+
+										<div class="cart_item_total cart_info_col">
+
+
+											<div class="cart_item_text total">@total</div>
+										</div>
+										<div class="cart_item_total cart_info_col" style="margin-top:30px;">
+											<a href="@Url.Action("RemoveItemCart","Cart" , new {id = item.Product.ProductId,attr=item.Attributes})" class="btn btn-danger">X</a>
+
+										</div>
+
+									</div>
+
+								</li>
+
+							}
+						</ul>
+
+
+					</div>
+
+					<!-- Order Total -->
+					<div class="order_total">
+						<div class="order_total_content text-md-right">
+
+							<div class="order_total_title">Order Total:</div>
+							<div class="order_total_amount orderTotal">@order</div>
+						</div>
+					</div>
+
+					<div class="cart_buttons">
+						<a href="@Url.Action("Index","Products")" class="button cart_button_clear">Continue Buy</a>
+						<button type="button" id="payment" class="button cart_button_checkout">Payment</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@section pluginjs{
+
+	<script src="~/Content/plugins/easing/easing.js"></script>
+	<script src="~/Content/js/cart_custom.js"></script>
+}
+@section scripts{
+	<script>
+		$(function () {
+
+			$('#payment').click(function () {
+				var user = localStorage.getItem("user");
+				if (localStorage.getItem("user") != null) {
+					window.location.href = '/Cart/Payment'
+				}
+
+				else {
+					swal({
+						text: 'You must login before making payment',
+						icon: "error",
+						button: "OK!",
+					});
+				}
+
+			})
+			$('.quantity').each(function () {
+				var spinner = $(this),
+					input = spinner.find('input[type="number"]')
+				input.change(function () {
+					var li = $(this).parents("li");
+					var _id = li.data("id");
+					var _price = li.data("price");
+					var _attr = li.data("attribute");
+					var _quantity = $(this).val();
+					var _total = parseInt(_price) * parseInt(_quantity);
+					console.log(_id + " | " + _price + " | " + _quantity + " | " + _attr);
+					$.ajax({
+						type: "POST",
+						url: "/Cart/UpdateCart",
+						data: { id: _id, qty: _quantity, attr: _attr },
+						success: function (res) {
+							li.find(".total").text(_total);
+							var _totalMoney = 0;
+							$("li .total").each(function () {
+								var val = parseInt($(this).text());
+								_totalMoney += val;
+							})
+							$(".orderTotal").text(_totalMoney);
+						}
+					})
+
+				})
+
+			})
+			//$(".quantity").each(function () {
+			//    $(".quantity_input").change(function () {
+			//        var _id = $("#update").data("id");
+			//        var _quantity = $("#quantity_input").val();
+			//        var _attibute = $("#update").data("attribute");
+			//        var _price = $("#update").data("price");
+			//        var _total = parseFloat(_price) * parseInt(_quantity);
+			//        console.log(_id + " | " + _price + " | " + _quantity + " | " + _attibute);
+			//    //Gọi ajax update
+			//    $.ajax({
+			//        type:"POST",
+			//        url: "/Cart/UpdateCart",
+			//        data: { id: _id, qty: _quantity, attr: _attibute },
+			//        success: function (res) {
+			//            $("#total").text(_total);
+			//            var _totalMoney = 0;
+			//            $("#total").each(function () {
+			//                var val = parseInt($(this).text());
+			//                _totalMoney += val;
+			//            })
+			//            $("#orderTotal").text(_totalMoney)
+			//        }
+			//    })
+
+			//})
+			//})
+			//jQuery().insertAfter('.quantity input');
+
+
+		})
+	</script>
+}
+

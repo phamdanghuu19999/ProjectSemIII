@@ -1,0 +1,171 @@
+﻿
+@{
+	ViewBag.Title = "Payment";
+}
+
+
+@model  IEnumerable<Project.Net.Models.DataModel.ItemCart>
+@using Project.Net.Models.DataModel;
+@section plugincss{
+
+	<link rel="stylesheet" type="text/css" href="~/Content/styles/cart_styles.css">
+	<link rel="stylesheet" type="text/css" href="~/Content/styles/cart_responsive.css">
+}
+
+<div class="cart_section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="cart_container">
+					<div class="cart_title">Shopping Cart</div>
+					<div class="cart_items">
+						<ul class="cart_list">
+							@{var cart = (List<ItemCart>)@Session["cart"]; }
+						
+							@{ var order = 0;}
+
+							@foreach (var item in cart)
+							{
+
+								<li class="cart_item clearfix">
+									<div class="cart_item_image"><img src="@item.Product.Image" alt=""></div>
+									<div class="cart_item_info d-flex flex-md-row flex-column justify-content-between">
+										<div class="cart_item_name cart_info_col">
+											<div class="cart_item_title">Name</div>
+											<div class="cart_item_text">@item.Product.ProductName</div>
+										</div>
+									
+										<div class="cart_item_quantity cart_info_col">
+											<div class="cart_item_title">Quantity</div>
+											<div class="cart_item_text">@item.Quantity</div>
+                                           
+										</div>
+										<div class="cart_item_price cart_info_col">
+											<div class="cart_item_title">Price</div>
+											@*@if (item.Product.SalePrice != null)
+											{
+												price = (int)item.Product.SalePrice;
+											}
+											else
+											{
+												price = (int)item.Product.Price;
+											}*@
+											<div class="cart_item_text">@item.price</div>
+										</div>
+										<div class="cart_item_total cart_info_col">
+											<div class="cart_item_title">Total</div>
+											@{ var total = (int)item.price * item.Quantity;
+												order += total;
+											}
+											<div class="cart_item_text">@total</div>
+										</div>
+									</div>
+								</li>
+
+							}
+
+						</ul>
+					</div>
+
+					<!-- Order Total -->
+					<div class="order_total">
+						<div class="order_total_content text-md-right">
+							<div class="order_total_title">Order Total:</div>
+							<div class="order_total_amount">@order</div>
+						</div>
+					</div>
+
+					
+				</div>
+			</div>
+			<div class="col-md-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title cart_title">Infomatin Receiver</h3>
+                    </div>
+                   
+                    <div class="panel-body" style="margin-top: 67px;">
+                        @using (Html.BeginForm("Payment","Cart",FormMethod.Post))
+                        {
+                            <label>
+                                <input type="checkbox" onclick="getInfo(this)" name="name" value="" />
+                                Người mua là người nhận
+                            </label>
+                            <input id="input" type="hidden" name="UserId" value="" />
+                            <div class="form-group">
+                                <label for="Email">Full name</label>
+                                <input type="text" class="form-control" name="FullName" id="FullName" value="">
+                            </div>
+                            <div class="form-group">
+                                <label for="Email">Email</label>
+                                <input type="email" class="form-control" id="Email" name="Email" value="">
+                                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Phone</label>
+                                <input type="text" class="form-control" name="Phone" id="Phone" value="">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Adress</label>
+                                <input type="text" class="form-control" name="Address" value="" id="Address">
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10 col-sm-offset-2">
+                                    <button type="submit" class="btn btn-primary" id="btn_pay" name="btn_pay">Pay</button>
+                                </div>
+                            </div>
+                        }
+
+
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+@section pluginjs{
+
+	<script src="~/Content/plugins/easing/easing.js"></script>
+	<script src="~/Content/js/cart_custom.js"></script>
+}
+@section scripts{
+	<script>
+        function getInfo(input) {
+            var user = JSON.parse(localStorage.getItem("user"));
+            if ($(input).is(":checked")) {
+                // Lấy thông tin đưa vào form
+                $("#FullName").val(user.FullName);
+                $("#Email").val(user.Email);
+                $("#Phone").val(user.Phone);
+                $("#Address").val(user.Address);
+                console.log("Checked");
+            } else {
+                $("#FullName").val("");
+                $("#Email").val("");
+                $("#Phone").val("");
+                $("#Address").val("");
+                console.log("Uncheck");
+            }
+        }
+		$(function () {
+			var user = JSON.parse(localStorage.getItem("user"));
+			console.log(user.UserId);
+			$('#input').val(user.UserId);
+			$('#btn_pay').click(function () {
+				swal({
+						text: 'Order successfully! Please check your email',
+						icon: "success",
+						button: "OK!",
+					});
+			})
+            
+		})
+	</script>
+}
+
+
+
+

@@ -1,0 +1,550 @@
+﻿@model Project.Net.Models.DataModel.User
+@using Project.Net.Models.DataModel;
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Fintech</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Fintech shop project">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="~/Content/styles/bootstrap4/bootstrap.min.css">
+    <link href="~/Content/plugins/fontawesome-free-5.0.1/css/fontawesome-all.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="~/Content/plugins/OwlCarousel2-2.2.1/owl.carousel.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/plugins/OwlCarousel2-2.2.1/owl.theme.default.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/plugins/OwlCarousel2-2.2.1/animate.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/toastr.css">
+
+
+    @RenderSection("plugincss", required: false)
+    <script src="~/Scripts/vue.min.js"></script>
+    <script src="~/Scripts/axios.min.js"></script>
+    <script src="~/Content/js/jquery-3.3.1.min.js"></script>
+</head>
+
+<body>
+
+	<div class="super_container">
+
+		<!-- Header -->
+
+		<header class="header" id="header">
+
+			<!-- Top Bar -->
+
+			<div class="top_bar">
+				<div class="container">
+					<div class="row">
+						<div class="col d-flex flex-row">
+							<div class="top_bar_contact_item"><div class="top_bar_icon"><img src="~/Content/images/phone.png" alt=""></div>+38 068 005 3570</div>
+							<div class="top_bar_contact_item"><div class="top_bar_icon"><img src="~/Content/images/mail.png" alt=""></div><a href="mailto:fastsales@gmail.com">fastsales@gmail.com</a></div>
+							<div class="top_bar_content ml-auto">
+								<div class="top_bar_menu">
+									<ul class="standard_dropdown top_bar_dropdown">
+										<li>
+											<a href="#">English<i class="fas fa-chevron-down"></i></a>
+											<ul>
+												<li><a href="#">Italian</a></li>
+												<li><a href="#">Spanish</a></li>
+												<li><a href="#">Japanese</a></li>
+											</ul>
+										</li>
+										<li>
+											<a href="#">$ US dollar<i class="fas fa-chevron-down"></i></a>
+											<ul>
+												<li><a href="#">EUR Euro</a></li>
+												<li><a href="#">GBP British Pound</a></li>
+												<li><a href="#">JPY Japanese Yen</a></li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+								<div class="top_bar_user" v-if="!infoUser()">
+									<div class="user_icon"><img src="~/Content/images/user.svg" alt=""></div>
+									<div><a href="#" data-toggle="modal" data-target="#myModal1">Register</a></div>
+									<div><a href="#" data-toggle="modal" data-target="#myModal">Sign in</a></div>
+								</div>
+								<div class="top_bar_user" v-else>
+									<div class="user_icon"><img src="~/Content/images/user.svg" alt=""></div>
+									<span>Hello </span><strong>{{infoUser().UserName}}</strong>
+									<button class="btn btn-primary glyphicon glyphicon-log-out" v-on:click="logout">Log Out</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Header Main -->
+
+			<div class="header_main">
+				<div class="container">
+					<div class="row">
+
+						<!-- Logo -->
+						<div class="col-lg-2 col-sm-3 col-3 order-1">
+							<div class="logo_container">
+								<div class="logo"><a href="/Home">Fintech</a></div>
+							</div>
+						</div>
+
+						<!-- Search -->
+						<div class="col-lg-6 col-12 order-lg-2 order-3 text-lg-left text-right">
+							<div class="header_search">
+								<div class="header_search_content">
+									<div class="header_search_form_container">
+										<div class="header_search_form clearfix">
+											<input v-model="search" required="required" class="header_search_input" placeholder="Search for products..." style="width:100%">
+											<button v-on:click="window.location.href='/Products/Search/'+search" class="header_search_button trans_300"><img src="~/Content/images/search.png" alt=""></button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Wishlist -->
+						<div class="col-lg-4 col-9 order-lg-3 order-2 text-lg-left text-right">
+							<div class="wishlist_cart d-flex flex-row align-items-center justify-content-end">
+								<div class="wishlist d-flex flex-row align-items-center justify-content-end">
+									<div class="wishlist_icon"><img src="~/Content/images/heart.png" alt=""></div>
+									<div class="wishlist_content">
+										<div class="wishlist_text"><a href="#">Wishlist</a></div>
+										<div class="wishlist_count">115</div>
+									</div>
+								</div>
+
+								<!-- Cart -->
+								<div class="cart">
+									<div class="cart_container d-flex flex-row align-items-center justify-content-end">
+										<div class="cart_icon">
+											@{ var totalCart = 0;}
+											@{ var lstCart = Session["cart"] as List<ItemCart>;}
+											@if (Session["cart"] == null)
+											{
+												totalCart = 0;
+											}
+											else
+											{
+												totalCart = lstCart.Count;
+											}
+
+
+											<img src="~/Content/images/cart.png" alt="">
+											<div class="cart_count"><span>@totalCart</span></div>
+										</div>
+										<div class="cart_content">
+											<div class="cart_text"><a href="@Url.Action("Index","Cart")">Cart</a></div>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Main Navigation -->
+
+			<nav class="main_nav">
+				<div class="container">
+					<div class="row">
+						<div class="col">
+
+							<div class="main_nav_content d-flex flex-row">
+
+								<!-- Categories Menu -->
+
+								<div class="cat_menu_container">
+									<div class="cat_menu_title d-flex flex-row align-items-center justify-content-start">
+										<div class="cat_burger"><span></span><span></span><span></span></div>
+										<div class="cat_menu_text">categories</div>
+									</div>
+
+									<ul class="cat_menu">
+										<li v-for="cat in listCategory"><a :href="'/Products/ProductInCate/'+cat.CategoryId">{{cat.CategoryName}}<i class="fas fa-chevron-right ml-auto"></i></a></li>
+
+									</ul>
+								</div>
+
+								<!-- Main Nav Menu -->
+
+								<div class="main_nav_menu ml-auto">
+									<ul class="standard_dropdown main_nav_dropdown">
+										<li><a href="@Url.Action("Index","Home")">Home<i class="fas fa-chevron-down"></i></a></li>
+										<li class="hassubs">
+											<a href="#">Pages<i class="fas fa-chevron-down"></i></a>
+											<ul>
+
+												<li><a href="@Url.Action("BlogSingle","Blog")">Blog Post<i class="fas fa-chevron-down"></i></a></li>
+												<li><a href="@Url.Action("RegularPost","Blog")">Regular Post<i class="fas fa-chevron-down"></i></a></li>
+
+											</ul>
+										</li>
+										<li><a href="@Url.Action("Index","Products")">Shop Product<i class="fas fa-chevron-down"></i></a></li>
+										<li><a href="@Url.Action("Index","Contact")">Contact<i class="fas fa-chevron-down"></i></a></li>
+									</ul>
+								</div>
+
+								<!-- Menu Trigger -->
+
+								<div class="menu_trigger_container ml-auto">
+									<div class="menu_trigger d-flex flex-row align-items-center justify-content-end">
+										<div class="menu_burger">
+											<div class="menu_trigger_text">menu</div>
+											<div class="cat_burger menu_burger_inner"><span></span><span></span><span></span></div>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+
+			<!-- Menu -->
+
+			<div class="page_menu">
+				<div class="container">
+					<div class="row">
+						<div class="col">
+
+							<div class="page_menu_content">
+
+								<div class="page_menu_search">
+									<form action="#">
+										<input type="search" required="required" class="page_menu_search_input" placeholder="Search for products...">
+									</form>
+								</div>
+								<ul class="page_menu_nav">
+									<li class="page_menu_item has-children">
+										<a href="#">Language<i class="fa fa-angle-down"></i></a>
+										<ul class="page_menu_selection">
+											<li><a href="#">English<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Italian<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Spanish<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Japanese<i class="fa fa-angle-down"></i></a></li>
+										</ul>
+									</li>
+									<li class="page_menu_item has-children">
+										<a href="#">Currency<i class="fa fa-angle-down"></i></a>
+										<ul class="page_menu_selection">
+											<li><a href="#">US Dollar<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">EUR Euro<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">GBP British Pound<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">JPY Japanese Yen<i class="fa fa-angle-down"></i></a></li>
+										</ul>
+									</li>
+									<li class="page_menu_item">
+										<a href="#">Home<i class="fa fa-angle-down"></i></a>
+									</li>
+									<li class="page_menu_item has-children">
+										<a href="#">Super Deals<i class="fa fa-angle-down"></i></a>
+										<ul class="page_menu_selection">
+											<li><a href="#">Super Deals<i class="fa fa-angle-down"></i></a></li>
+											<li class="page_menu_item has-children">
+												<a href="#">Menu Item<i class="fa fa-angle-down"></i></a>
+												<ul class="page_menu_selection">
+													<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+													<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+													<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+													<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+												</ul>
+											</li>
+											<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+										</ul>
+									</li>
+									<li class="page_menu_item has-children">
+										<a href="#">Featured Brands<i class="fa fa-angle-down"></i></a>
+										<ul class="page_menu_selection">
+											<li><a href="#">Featured Brands<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+										</ul>
+									</li>
+									<li class="page_menu_item has-children">
+										<a href="#">Trending Styles<i class="fa fa-angle-down"></i></a>
+										<ul class="page_menu_selection">
+											<li><a href="#">Trending Styles<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+											<li><a href="#">Menu Item<i class="fa fa-angle-down"></i></a></li>
+										</ul>
+									</li>
+									<li class="page_menu_item"><a href="blog.html">blog<i class="fa fa-angle-down"></i></a></li>
+									<li class="page_menu_item"><a href="contact.html">contact<i class="fa fa-angle-down"></i></a></li>
+								</ul>
+
+								<div class="menu_contact">
+									<div class="menu_contact_item"><div class="menu_contact_icon"><img src="~/Content/images/phone_white.png" alt=""></div>+38 068 005 3570</div>
+									<div class="menu_contact_item"><div class="menu_contact_icon"><img src="~/Content/images/mail_white.png" alt=""></div><a href="mailto:fastsales@gmail.com">fastsales@gmail.com</a></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</header>
+
+		<!-- Banner -->
+		@RenderBody()
+		<!-- Newsletter -->
+
+		<div class="newsletter">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<div class="newsletter_container d-flex flex-lg-row flex-column align-items-lg-center align-items-center justify-content-lg-start justify-content-center">
+							<div class="newsletter_title_container">
+								<div class="newsletter_icon"><img src="~/Content/images/send.png" alt=""></div>
+								<div class="newsletter_title">Sign up for Newsletter</div>
+								<div class="newsletter_text"><p>...and receive %20 coupon for first shopping.</p></div>
+							</div>
+							<div class="newsletter_content clearfix">
+								<form action="#" class="newsletter_form">
+									<input type="email" class="newsletter_input" required="required" placeholder="Enter your email address">
+									<button class="newsletter_button">Subscribe</button>
+								</form>
+								<div class="newsletter_unsubscribe_link"><a href="#">unsubscribe</a></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Footer -->
+
+		<footer class="footer">
+			<div class="container">
+				<div class="row">
+
+					<div class="col-lg-3 footer_col">
+						<div class="footer_column footer_contact">
+							<div class="logo_container">
+								<div class="logo"><a href="#">Fintech</a></div>
+							</div>
+							<div class="footer_title">Got Question? Call Us 24/7</div>
+							<div class="footer_phone">+84 0886 05 7654</div>
+							<div class="footer_contact_text">
+								<p>17 Princess Road, London</p>
+                                <p>Tòa nhà Handico, đối diện tòa nhà KeangNam, Nam Từ Liêm , Hà Nội</p>
+							</div>
+							<div class="footer_social">
+								<ul>
+									<li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+									<li><a href="#"><i class="fab fa-twitter"></i></a></li>
+									<li><a href="#"><i class="fab fa-youtube"></i></a></li>
+									<li><a href="#"><i class="fab fa-google"></i></a></li>
+									<li><a href="#"><i class="fab fa-vimeo-v"></i></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-2 offset-lg-2">
+						<div class="footer_column">
+							<div class="footer_title">Find it Fast</div>
+							<ul class="footer_list">
+								<li><a href="#">Computers & Laptops</a></li>
+								<li><a href="#">Cameras & Photos</a></li>
+								<li><a href="#">Hardware</a></li>
+								<li><a href="#">Smartphones & Tablets</a></li>
+								<li><a href="#">TV & Audio</a></li>
+							</ul>
+							<ul class="footer_list">
+								<li><a href="#">Car Electronics</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-2">
+						<div class="footer_column">
+							<ul class="footer_list footer_list_2">
+								<li><a href="#">Video Games & Consoles</a></li>
+								<li><a href="#">Accessories</a></li>
+								<li><a href="#">Cameras & Photos</a></li>
+								<li><a href="#">Hardware</a></li>
+								<li><a href="#">Computers & Laptops</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="col-lg-2">
+						<div class="footer_column">
+							<div class="footer_title">Customer Care</div>
+							<ul class="footer_list">
+								<li><a href="#">My Account</a></li>
+								<li><a href="#">Order Tracking</a></li>
+								<li><a href="#">Wish List</a></li>
+								<li><a href="#">Customer Services</a></li>
+								<li><a href="#">Returns / Exchange</a></li>
+								<li><a href="#">FAQs</a></li>
+								<li><a href="#">Product Support</a></li>
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</footer>
+		<div id="log_reg">
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title text-center" id="myModalLabel" style="font-weight: bold;font-size: 18px;">Log In</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class="form-group row">
+								<label for="inputUsername" class="col-sm-3 col-form-label" style="padding: 3px;font-size: 20px;text-align: center;">Username </label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" v-model="modelLogin.UserName" >
+									<div class="help-block" id="ErrorUserame" style="display: none;">
+										Account must not be empty !
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="inputPassword" class="col-sm-3 col-form-label" style="padding: 3px;font-size: 20px;text-align:center;">Password </label>
+								<div class="col-sm-9">
+									<input type="password" class="form-control" v-model="modelLogin.Password">
+									<div class="help-block" id="ErrorPassword" style="display: none;">
+										Password can not be left blank !
+									</div>
+								</div>
+							</div>
+							<p class="text-center">No Account ? <a href="" data-toggle="modal" id="btn-sign">Sign Up</a></p>
+							<div class="form-group">
+								<div class="text-center">
+									<button class="btn btn-default btn-log" v-on:click="login"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			@*Modal đăng kí*@
+			<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title text-center" id="myModalLabel" style="font-weight: bold;font-size: 18px;">Sign Up</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class="form-group row">
+								<label class="col-sm-3 col-form-label text-right" style="padding:3px;font-size: 16px;margin-top: 3px">Full name </label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" name="inputNameS" placeholder="Phạm Đăng Hữu" v-model="modelReg.FullName">
+									<div class="help-block" id="ErrorNameS" style="display: none;">
+										Name can not be left empty !
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="inputNameS" class="col-sm-3 col-form-label text-right" style="padding:3px;font-size: 16px;margin-top: 3px">Address </label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" v-model="modelReg.Address" name="inputAdd" placeholder="Ngõ 546 Trần Cung, Cổ Nhuế 1, Bắc Từ Liêm, Hà Nội">
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="inputUsernameS" class="col-sm-3 col-form-label text-right" style="padding:3px;font-size: 16px;margin-top: 3px">Username </label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" v-model="modelReg.UserName" name="inputUsernameS" placeholder="huupd">
+									<div class="help-block" id="ErrorUserameS" style="display: none;">
+										Account must not be empty !
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="inputPasswordS" class="col-sm-3 col-form-label text-right" style="padding:3px;font-size: 16px;margin-top: 3px">Password </label>
+								<div class="col-sm-9">
+									<input type="password" class="form-control" v-model="modelReg.Password" name="inputPasswordS" placeholder="">
+									<div class="help-block" id="ErrorPasswordS" style="display: none;">
+										Password can not be left blank !
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="inputRepass" class="col-sm-3 col-form-label text-right" style="padding:3px;font-size: 16px;margin-top: 3px">Re-Password </label>
+								<div class="col-sm-9">
+									<input type="password" class="form-control" v-model="repass" name="inputRepass" placeholder="">
+									<div class="help-block" id="ErrorRepass" style="display: none;">
+										password must be the same !
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="inputEmail" class="col-sm-3 col-form-label text-right" style="padding:3px;font-size: 16px;margin-top: 3px">Email </label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" v-model="modelReg.Email" name="inputEmail" placeholder="huupd@example.com">
+									<div class="help-block" id="ErrorEmail1" style="display: none;">
+										Email is not vacant !
+									</div>
+									<div class="help-block" id="ErrorEmail2" style="display: none;">
+										Email must be in the correct format!
+									</div>
+								</div>
+							</div>
+							<div class="form-group row">
+								<label for="inputPhone" class="col-sm-3 col-form-label text-right" style="padding:3px;font-size: 16px;margin-top: 3px">Phone </label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control" v-model="modelReg.Phone" name="inputPhone" placeholder="01684693524">
+									<div class="help-block" id="ErrorPhone1" style="display: none;">
+										Phone number can not be empty!
+									</div>
+									<div class="help-block" id="ErrorPhone2" style="display: none;">
+										The phone number must be in the correct format!
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="text-center">
+									<button type="submit" class="btn btn-default btn-sign" name="signup_btn" v-on:click="register"><i class="fas fa-sign-in-alt"></i> Sign Up </button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="~/Scripts/toastr.min.js"></script>
+	<script src="~/Content/plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+	<script src="~/Content/styles/bootstrap4/popper.js"></script>
+	<script src="~/Content/styles/bootstrap4/bootstrap.min.js"></script>
+	<script src="~/Content/plugins/greensock/TweenMax.min.js"></script>
+	<script src="~/Content/plugins/greensock/TimelineMax.min.js"></script>
+	<script src="~/Content/plugins/scrollmagic/ScrollMagic.min.js"></script>
+	<script src="~/Content/plugins/greensock/animation.gsap.min.js"></script>
+	<script src="~/Content/plugins/greensock/ScrollToPlugin.min.js"></script>
+	<script src="~/Content/js/custom/index.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script>
+		$('#btn-sign').click(function () {
+			$('#myModal1').modal("show")
+			$('#myModal').modal("hide")
+
+		})
+	</script>
+	@RenderSection("pluginjs", required: false)
+
+
+
+	@RenderSection("scripts", required: false)
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+﻿</main>
+			<footer>
+				<p>LIÊN HỆ</p>
+				<p>Tòa nhà Handico, đối diện tòa nhà KeangNam, Nam Từ Liêm , Hà Nội.</p>
+				<p>Tư Vấn Online: 0968.27.6996 / 024 3755 4010</p>
+				<p>huupd@smartosc.fintech.com</p>
+			</footer>
+		</div>
+	</div>
+</body>
+</html>
